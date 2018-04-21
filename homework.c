@@ -51,6 +51,7 @@ int block_map_base;
 
 int n_blocks;
 int root_inode;
+struct fs_super *super_block;
 
 // define constants
 int num_entry = FS_BLOCK_SIZE / sizeof(struct fs_dirent);
@@ -94,6 +95,7 @@ void *fs_init(struct fuse_conn_info *conn)
 
     n_blocks = sb.num_blocks;
     root_inode = sb.root_inode;
+    super_block = &sb;
     return NULL;
 }
 
@@ -1445,11 +1447,19 @@ static int fs_statfs(const char *path, struct statvfs *st)
      * calculate the correct values later.
      */
     st->f_bsize = FS_BLOCK_SIZE;
-    st->f_blocks = 0; /* probably want to */
-    st->f_bfree = 0;  /* change these */
-    st->f_bavail = 0; /* values */
+    st->f_blocks = n_blocks - (1 + super_block->inode_map_sz + super_block->inode_region_sz + super_block->block_map_sz + root_inode);/* probably want to */
+    st->f_bfree = st->f_blocks;  /* change these */
+    st->f_bavail = st->bfree; /* values */
     st->f_namemax = 27;
 
+    // traverse through all blocks and calculate blocks used
+    int i;
+    for(i = 0; i < n_blocks; i++) {
+        if(FD_ISSET(i, block_map)) {
+            st->f_bfree--;
+        }
+    }
+    
     return 0;
 }
 
