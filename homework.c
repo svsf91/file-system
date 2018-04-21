@@ -314,19 +314,22 @@ static int is_file(const char *path)
 static int fs_opendir(const char *path, struct fuse_file_info *fi)
 {
     int val;
-    if ((val = is_dir(path)) == SUCCESS)
+    if (is_dir(path)) {
         fi->fh = lookup(path);
-
-    return val;
+        return SUCCESS;
+    }
+    return -ENOTDIR;
 }
 
 static int fs_releasedir(const char *path, struct fuse_file_info *fi)
 {
     int val;
-    if ((val = is_dir(path)) == SUCCESS)
+    if (is_dir(path)) {
         fi->fh = -1;
+        return SUCCESS;
+    }
 
-    return val;
+    return -ENOTDIR;
 }
 
 static int search_available_inode()
@@ -1449,7 +1452,7 @@ static int fs_statfs(const char *path, struct statvfs *st)
     st->f_bsize = FS_BLOCK_SIZE;
     st->f_blocks = n_blocks - (1 + super_block->inode_map_sz + super_block->inode_region_sz + super_block->block_map_sz + root_inode);/* probably want to */
     st->f_bfree = st->f_blocks;  /* change these */
-    st->f_bavail = st->bfree; /* values */
+    st->f_bavail = st->f_bfree; /* values */
     st->f_namemax = 27;
 
     // traverse through all blocks and calculate blocks used

@@ -33,6 +33,7 @@ PATH: /usr/local/bin
 PATH: /usr/bin
 PATH: /usr/local/sbin
 PATH: /usr/sbin
+PATH: /home/dengch/bin
 
 
 ## ----------- ##
@@ -728,7 +729,7 @@ conftest.c:38:1: warning: function declaration isn't a prototype [-Wstrict-proto
 conftest.c:40:1: warning: function declaration isn't a prototype [-Wstrict-prototypes]
  main ()
  ^
-/tmp/ccgyFWYk.o: In function `main':
+/tmp/ccHAyGa1.o: In function `main':
 /home/dengch/cs5600/team-3/hw4/fuse-2.9.7/conftest.c:42: undefined reference to `dlopen'
 collect2: error: ld returned 1 exit status
 configure:12397: $? = 1
@@ -859,6 +860,7 @@ config.status:1116: creating example/Makefile
 config.status:1116: creating include/Makefile
 config.status:1116: creating doc/Makefile
 config.status:1116: creating include/config.h
+config.status:1297: include/config.h is unchanged
 config.status:1345: executing depfiles commands
 config.status:1345: executing libtool commands
 
